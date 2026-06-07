@@ -1,148 +1,185 @@
-TREYAK - Plataforma de Gestión y Comunicación
-===============================================
+# TREYAK - Plataforma Web de Gestión y Comunicación
 
-Treyak es una aplicación web desarrollada en PHP que proporciona un espacio privado para usuarios autenticados, con funcionalidades de gestión de usuarios, mensajería instantánea, foro de discusión, centro de ayuda y configuración personalizable. Ideal para comunidades o equipos que necesitan un entorno centralizado de comunicación y administración.
+TREYAK es una aplicación web desarrollada en **PHP y MySQL** que funciona como una plataforma privada para usuarios registrados. El sistema permite gestionar cuentas, comunicarse mediante mensajería interna, participar en un foro de discusión y administrar información personal desde un panel centralizado.
 
-CARACTERÍSTICAS PRINCIPALES
-----------------------------
-- Sistema de autenticación seguro: Registro e inicio de sesión con protección CSRF y manejo de sesiones.
-- Panel de inicio personalizado: Resumen de cuenta, actividad reciente, progreso, cursos y notificaciones.
-- Gestión de usuarios: Listado, edición y eliminación de usuarios (solo administradores o según permisos).
-- Mensajería en tiempo real: Chat entre usuarios con envío de mensajes de texto y documentos.
-- Foro de discusión: Creación de hilos, respuestas, fijación y cierre de temas.
-- Centro de ayuda: Preguntas frecuentes, guías y formulario de contacto.
-- Configuración de cuenta: Actualización de información personal, cambio de contraseña, preferencias de notificaciones y foto de perfil.
-- Diseño responsive: Interfaz adaptable a dispositivos móviles y de escritorio.
+Este proyecto fue creado como práctica de desarrollo web full stack, integrando frontend, backend, base de datos y medidas básicas de seguridad.
 
-TECNOLOGÍAS UTILIZADAS
------------------------
-- Backend: PHP 7/8
-- Base de datos: MySQL
-- Frontend: HTML5, CSS3, JavaScript (nativo)
-- Íconos: Boxicons
-- Seguridad: Sesiones, CSRF tokens, validación de entrada, prevención de XSS con htmlspecialchars
+## Características principales
 
-REQUISITOS PREVIOS
--------------------
-- Servidor web (Apache / Nginx) con PHP 7.4 o superior
-- MySQL 5.7 o superior
-- Extensión mysqli habilitada en PHP
-- Navegador web moderno
+* Registro e inicio de sesión de usuarios.
+* Manejo de sesiones en PHP.
+* Protección mediante tokens CSRF.
+* Panel principal para usuarios autenticados.
+* Gestión de usuarios.
+* Edición y eliminación de cuentas.
+* Sistema de mensajería entre usuarios.
+* Foro de discusión con hilos y respuestas.
+* Centro de ayuda.
+* Configuración de perfil.
+* Cambio de contraseña.
+* Subida de archivos e imágenes.
+* Diseño responsive adaptable a escritorio y móviles.
 
-INSTALACIÓN Y CONFIGURACIÓN
-----------------------------
+## Tecnologías utilizadas
 
-1. Clonar el repositorio
-   git clone https://github.com/tuusuario/treyak.git
-   cd treyak
+* **PHP**
+* **MySQL**
+* **HTML5**
+* **CSS3**
+* **JavaScript**
+* **Boxicons**
+* **XAMPP / Apache**
+* **phpMyAdmin**
 
-2. Configurar la base de datos
-   - Crear una base de datos en MySQL (ejemplo: treyak_db).
-   - Importar el archivo database.sql (si se proporciona) para crear las tablas necesarias.
-   - Si no existe, deberás crear las tablas manualmente según la estructura de los archivos PHP.
+## Estructura del proyecto
 
-3. Configurar la conexión
-   Editar el archivo php/pagina_general/conexion_be.php con tus credenciales de base de datos:
-   <?php
-   $conexion = mysqli_connect("localhost", "usuario", "contraseña", "treyak_db");
-   if (!$conexion) {
-       die("Error de conexión: " . mysqli_connect_error());
-   }
-   ?>
+```bash
+MyPage/
+├── css/
+│   ├── index/
+│   ├── inicio/
+│   ├── Usuarios/
+│   └── pagina_general/
+├── js/
+│   └── index/
+├── images/
+│   └── index/
+├── php/
+│   ├── index/
+│   ├── pagina_general/
+│   └── Usuarios/
+├── uploads/
+├── index.php
+├── Inicio.php
+├── Usuarios.php
+├── editarUsuario.php
+├── Mensajes.php
+├── Foro.php
+├── verHilo.php
+├── Configuracion.php
+└── Ayuda.php
+```
 
-4. Configurar el servidor web
-   - Asegúrate de que el servidor apunte a la carpeta raíz del proyecto.
-   - Habilita el módulo de reescritura si usas Apache (para URLs amigables, aunque no es obligatorio).
+## Requisitos previos
 
-5. Establecer permisos
-   - La carpeta uploads/ debe tener permisos de escritura para que los usuarios puedan subir archivos.
-   chmod 755 uploads
+Para ejecutar el proyecto necesitas tener instalado:
 
-6. Acceder a la aplicación
-   - Abre el navegador y ve a http://localhost/treyak/
-   - Regístrate como nuevo usuario o inicia sesión si ya tienes una cuenta.
+* PHP 7.4 o superior.
+* MySQL 5.7 o superior.
+* Servidor local como XAMPP, WAMP o Laragon.
+* Navegador web moderno.
+* Extensión `mysqli` habilitada en PHP.
 
-   Nota: El primer usuario registrado no obtiene automáticamente permisos de administrador. Puedes asignar el rol directamente en la base de datos si es necesario.
+## Instalación
 
-ESTRUCTURA DEL PROYECTO
-------------------------
-treyak/
-│
-├── css/                      # Hojas de estilo organizadas por módulos
-│   ├── pagina_general/       # Estilos comunes (sidebar, footer)
-│   ├── index/                # Estilos de la página de inicio de sesión
-│   ├── inicio/               # Estilos del panel de inicio
-│   ├── Usuarios/             # Estilos para gestión de usuarios
-│   └── ...                   # Otros estilos específicos
-│
-├── js/                       # Scripts JavaScript
-│   └── index/                # Animaciones de la página de login
-│
-├── images/                   # Imágenes (avatares, etc.)
-│   └── index/                # Avatares por defecto
-│
-├── php/                       # Lógica del backend
-│   ├── index/                 # Procesos de login y registro
-│   ├── pagina_general/        # Conexión, cierre de sesión
-│   ├── Usuarios/              # Eliminar usuarios
-│   └── ...                    # Otros procesos (mensajes, foro, etc.)
-│
-├── uploads/                   # Archivos subidos por usuarios
-│
-├── index.php                  # Página de inicio de sesión / registro
-├── Inicio.php                 # Panel principal después del login
-├── Usuarios.php               # Lista de usuarios
-├── editarUsuario.php          # Editar un usuario específico
-├── Mensajes.php               # Sistema de mensajería
-├── Foro.php                   # Foro de discusión
-├── verHilo.php                # Ver un hilo del foro con respuestas
-├── Configuracion.php          # Configuración de la cuenta
-├── Ayuda.php                  # Centro de ayuda
-└── README.md                  # Este archivo (originalmente en markdown)
+1. Clona el repositorio:
 
-CAPTURAS DE PANTALLA
----------------------
-(Agrega aquí imágenes si deseas mostrar la interfaz)
+```bash
+git clone https://github.com/ab3leitor/MyPage.git
+```
 
-USO
-----
+2. Mueve la carpeta del proyecto a la ruta de tu servidor local.
 
-Acceso
-- Regístrate completando el formulario y eligiendo un avatar.
-- Inicia sesión con usuario y contraseña.
+En XAMPP, por ejemplo:
 
-Navegación
-- El sidebar lateral permite acceder a todas las secciones.
-- Desde Inicio puedes ver un resumen personalizado.
-- En Usuarios puedes administrar otros usuarios (editar/eliminar).
-- Mensajes te permite chatear en tiempo real con otros usuarios y enviar archivos.
-- El Foro es un espacio de discusión donde puedes crear hilos y responder.
-- En Configuración puedes modificar tus datos, contraseña, notificaciones y foto de perfil.
-- Ayuda contiene preguntas frecuentes y un formulario de contacto.
+```bash
+C:/xampp/htdocs/MyPage
+```
 
-Mensajería
-- Para enviar un mensaje, selecciona un contacto de la lista de conversaciones.
-- Escribe tu mensaje o adjunta un archivo (imagen, documento, etc.).
-- Los mensajes se muestran con marcas de tiempo y estado de enviado.
+3. Inicia Apache y MySQL desde XAMPP.
 
-Foro
-- Crea un nuevo hilo con título y contenido.
-- Responde a hilos existentes.
-- Los hilos pueden ser fijados o cerrados (funcionalidad de administrador).
+4. Crea una base de datos en phpMyAdmin.
 
-CONTRIBUCIONES
----------------
-Las contribuciones son bienvenidas. Si deseas mejorar el proyecto:
+Ejemplo:
 
-1. Haz un fork del repositorio.
-2. Crea una rama con tu función: git checkout -b feature/nueva-funcion
-3. Haz commit de tus cambios: git commit -m 'Agrega nueva función'
-4. Haz push a la rama: git push origin feature/nueva-funcion
-5. Abre un Pull Request.
+```sql
+CREATE DATABASE treyak_db;
+```
 
-LICENCIA
----------
-Este proyecto está bajo la licencia MIT. Consulta el archivo LICENSE para más detalles.
+5. Configura la conexión a la base de datos en el archivo correspondiente del proyecto:
 
---- 
-Desarrollado con ❤️ por Abel Arriagada y colaboradores.
+```php
+$conexion = mysqli_connect("localhost", "root", "", "treyak_db");
+```
+
+6. Accede al proyecto desde el navegador:
+
+```bash
+http://localhost/MyPage/
+```
+
+## Uso
+
+1. Registra una nueva cuenta de usuario.
+2. Inicia sesión con tus credenciales.
+3. Accede al panel principal.
+4. Navega por las secciones disponibles:
+
+   * Inicio
+   * Usuarios
+   * Mensajes
+   * Foro
+   * Configuración
+   * Ayuda
+
+## Funcionalidades destacadas
+
+### Autenticación
+
+El sistema permite registrar usuarios e iniciar sesión mediante formularios conectados a una base de datos MySQL.
+
+### Gestión de usuarios
+
+Incluye una sección para visualizar, editar y eliminar usuarios registrados.
+
+### Mensajería
+
+Permite la comunicación entre usuarios mediante mensajes internos y envío de archivos.
+
+### Foro
+
+Los usuarios pueden crear hilos de discusión, responder publicaciones y participar en conversaciones dentro de la plataforma.
+
+### Configuración de cuenta
+
+Cada usuario puede modificar datos personales, contraseña, preferencias y foto de perfil.
+
+## Seguridad
+
+El proyecto implementa medidas básicas de seguridad como:
+
+* Manejo de sesiones.
+* Validación de formularios.
+* Protección CSRF.
+* Sanitización de datos.
+* Prevención básica de XSS mediante `htmlspecialchars`.
+
+## Mejoras futuras
+
+* Agregar roles de usuario más completos.
+* Mejorar el panel de administración.
+* Implementar recuperación de contraseña por correo.
+* Agregar paginación en usuarios, mensajes y foro.
+* Mejorar validaciones del lado servidor.
+* Implementar notificaciones en tiempo real.
+* Añadir documentación de la base de datos.
+* Crear archivo SQL de instalación automática.
+* Mejorar la estructura MVC del proyecto.
+* Agregar modo oscuro/claro.
+
+## Estado del proyecto
+
+Proyecto en desarrollo y mejora continua.
+
+Actualmente funciona como una plataforma web educativa para practicar conceptos de desarrollo backend, frontend, autenticación y manejo de base de datos.
+
+## Autor
+
+Desarrollado por **Abel Arriagada**.
+
+* GitHub: [@ab3leitor](https://github.com/ab3leitor)
+
+## Licencia
+
+Este proyecto se distribuye bajo licencia MIT.
+Puedes usarlo, modificarlo y adaptarlo con fines educativos.
