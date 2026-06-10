@@ -4,31 +4,61 @@ require 'conexion_be.php';
 
 session_start();
 if (!isset($_SESSION['id'])) {
+    http_response_code(401);
     echo json_encode(['error' => 'No autenticado']);
     exit;
 }
 
-$userId = $_SESSION['id'];
-$searchTerm = isset($_GET['q']) ? trim($_GET['q']) : '';
+$userId = intval($_SESSION['id']);
+$searchTerm = trim($_GET['q'] ?? '');
 
-if (empty($searchTerm)) {
+if ($searchTerm === '') {
     echo json_encode([]);
     exit;
 }
 
-$searchTerm = "%$searchTerm%";
+$likeTerm = "%$searchTerm%";
 
-$query = "SELECT DISTINCT u.id as user_id, u.usuario as name
+$query = "SELECT DISTINCT
+            u.id AS user_id,
+            u.usuario AS name,
+            u.nombreCompleto AS full_name,
+            (SELECT content FROM messages
+             WHERE (sender_id = u.id AND receiver_id = ?)
+                OR (sender_id = ? AND receiver_id = u.id)
+             ORDER BY created_at DESC LIMIT 1) AS last_message,
+            (SELECT is_document FROM messages
+             WHERE (sender_id = u.id AND receiver_id = ?)
+                OR (sender_id = ? AND receiver_id = u.id)
+             ORDER BY created_at DESC LIMIT 1) AS last_is_document
           FROM usuario u
-          JOIN messages m ON (m.sender_id = u.id OR m.receiver_id = u.id)
-          WHERE u.id != ? AND 
-                ((m.sender_id = ? AND m.receiver_id = u.id) OR 
-                 (m.sender_id = u.id AND m.receiver_id = ?)) AND
-                m.content LIKE ?
-          ORDER BY u.usuario";
+          LEFT JOIN messages m ON (m.sender_id = u.id OR m.receiver_id = u.id)
+          WHERE u.id != ?
+            AND (
+                u.usuario LIKE ?
+                OR u.nombreCompleto LIKE ?
+                OR (
+                    ((m.sender_id = ? AND m.receiver_id = u.id)
+                    OR (m.sender_id = u.id AND m.receiver_id = ?))
+                    AND m.content LIKE ?
+                )
+            )
+          ORDER BY u.usuario ASC";
 
 $stmt = $conexion->prepare($query);
-$stmt->bind_param("iiis", $userId, $userId, $userId, $searchTerm);
+$stmt->bind_param(
+    "iiiiissiis",
+    $userId,
+    $userId,
+    $userId,
+    $userId,
+    $userId,
+    $likeTerm,
+    $likeTerm,
+    $userId,
+    $userId,
+    $likeTerm
+);
 $stmt->execute();
 $result = $stmt->get_result();
 

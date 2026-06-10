@@ -43,7 +43,7 @@ if (isset($_SESSION['usuario'])) {
                 <div class="caja__trasera-register">
                     <h3>¿Aún no tienes una cuenta?</h3>
                     <p>Regístrate para que puedas iniciar sesión</p>
-                    <button id="btn__registrarse" aria-label="Registrarse">Regístrarse</button>
+                    <button id="btn__registrarse" aria-label="Registrarse">Registrarse</button>
                 </div>
             </div>
 
@@ -90,7 +90,7 @@ if (isset($_SESSION['usuario'])) {
 
                 <!-- Register -->
                 <form action="php/registro_usuario_be.php" method="POST" class="formulario__register">
-                    <h2>Regístrarse</h2>
+                    <h2>Registrarse</h2>
 
                     <div class="input-group">
                         <input type="text" placeholder="Nombre completo" name="nombreCompleto" required aria-label="Nombre completo">
@@ -113,20 +113,20 @@ if (isset($_SESSION['usuario'])) {
                         <h3>Selecciona tu avatar</h3>
                         <div class="avatar-options">
                             <label class="avatar-option">
-                                <input type="radio" name="avatar" value="avatar1.png" checked>
-                                <img src="images/index/4ce02b3685a1786ce1cb44c27a6b9174.webp" alt="Avatar 1">
+                                <input type="radio" name="avatar" value="mewtwo-inspired-avatar.png" checked>
+                                <img src="images/mewtwo-inspired-avatar.png" alt="Avatar 1">
                             </label>
                             <label class="avatar-option">
-                                <input type="radio" name="avatar" value="avatar2.png">
-                                <img src="images/index/5b452656f2b7552f4b960a89b523aea0.webp" alt="Avatar 2">
+                                <input type="radio" name="avatar" value="mewtwo-inspired-avatar.png">
+                                <img src="images/mewtwo-inspired-avatar.png" alt="Avatar 2">
                             </label>
                             <label class="avatar-option">
-                                <input type="radio" name="avatar" value="avatar3.png">
-                                <img src="images/index/6feba6943fe8411bef9eb6f8bed350de.webp" alt="Avatar 3">
+                                <input type="radio" name="avatar" value="mewtwo-inspired-avatar.png">
+                                <img src="images/mewtwo-inspired-avatar.png" alt="Avatar 3">
                             </label>
                             <label class="avatar-option">
-                                <input type="radio" name="avatar" value="avatar4.png">
-                                <img src="images/index/72976236f7a13f5076b620c02457a917.webp" alt="Avatar 3">
+                                <input type="radio" name="avatar" value="mewtwo-inspired-avatar.png">
+                                <img src="images/mewtwo-inspired-avatar.png" alt="Avatar 3">
                             </label>
                         </div>
                     </div>

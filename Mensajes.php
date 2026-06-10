@@ -66,13 +66,13 @@ if (!isset($_SESSION['usuario'])) {
           <!--Icono del item-->
           <i class='bx bxs-user'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">User</span>
+          <span class="links_name">Usuarios</span>
         </a>
         <span class="tooltip">Usuarios</span>
       </li>
       <!--Mensajes-->
       <li>
-        <!--Redirecion a otra pagina-->
+        <!--Redirección a otra página-->
         <a href="Mensajes.php">
           <!--Icono del item-->
           <i class='bx bx-conversation'></i>
@@ -83,25 +83,25 @@ if (!isset($_SESSION['usuario'])) {
       </li>
       <!--Administrador de archivos-->
       <li>
-        <!--Redirecion a otra pagina-->
+        <!--Redirección a otra página-->
         <a href="Foro.php">
           <!--Icono del item-->
           <i class='bx bxs-folder-open'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Archivos</span>
+          <span class="links_name">Foro</span>
         </a>
         <span class="tooltip">Foro</span>
       </li>
       <!--Items de la Lista-->
       <li>
-        <!--Configuracion-->
+        <!--Configuración-->
         <a href="Configuracion.php">
           <!--Icono del item-->
           <i class='bx bxs-cog'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Configuracion</span>
+          <span class="links_name">Configuración</span>
         </a>
-        <span class="tooltip">Configuracion</span>
+        <span class="tooltip">Configuración</span>
       </li>
       <!--Items de la Lista-->
       <li>
@@ -118,7 +118,7 @@ if (!isset($_SESSION['usuario'])) {
     <div class="perfil_contenido">
       <div class="perfil">
         <div class="perfil_detalles">
-          <img src="images/perfil.jpg" alt="">
+          <img src="images/mewtwo-inspired-avatar.png" alt="">
           <div class="name_job">
             <div class="name">Abel Arriagada</div>
             <div class="job">Programador</div>
@@ -133,7 +133,7 @@ if (!isset($_SESSION['usuario'])) {
       </div>
     </div>
   </div>
-  <!--Aqui ya comienza el segmento de la pagina-->
+  <!--Aquí ya comienza el segmento de la página-->
   <div class="home_contenido">
     <div class="contenido">
       <div class="chat-container">
@@ -181,9 +181,9 @@ if (!isset($_SESSION['usuario'])) {
           </form>
 
           <!-- Botón flotante para abrir el foro -->
-          <button id="openForumBtn" class="floating-forum-btn">
+          <a href="Foro.php" id="openForumBtn" class="floating-forum-btn" aria-label="Abrir foro">
             <i class='bx bx-message-rounded-dots'></i> Foro
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -214,7 +214,7 @@ if (!isset($_SESSION['usuario'])) {
           </a>
         </div>
 
-        <p class="footer-copyright">© 2023 NombreApp. Todos los derechos reservados.</p>
+        <p class="footer-copyright">© 2026 Treyak. Todos los derechos reservados.</p>
       </div>
     </footer>
   </div>
@@ -286,6 +286,20 @@ if (!isset($_SESSION['usuario'])) {
         return textStr.replace(regex, '<span class="highlight">$1</span>');
       };
 
+      const escapeHtml = (unsafe) => {
+        return (unsafe || '').toString()
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      };
+
+      const getPreviewText = (conv) => {
+        if (conv.last_is_document == 1) return 'Archivo enviado';
+        return conv.last_message || 'Nuevo chat';
+      };
+
       // Función auxiliar para colores de avatar
       const getRandomColor = () => {
         const colors = ['#3498db', '#2ecc71', '#9b59b6', '#f1c40f', '#1abc9c'];
@@ -333,9 +347,9 @@ if (!isset($_SESSION['usuario'])) {
         ${conv.name?.charAt(0)?.toUpperCase() || ''}
       </div>
       <div class="conversation-info">
-        <div class="conversation-name">${highlightText(conv.name, searchInput.value)}</div>
+        <div class="conversation-name">${highlightText(escapeHtml(conv.full_name || conv.name), searchInput.value)}</div>
         <div class="conversation-preview">
-          ${highlightText(conv.last_message || 'Nuevo chat', searchInput.value)}
+          ${highlightText(escapeHtml(getPreviewText(conv)), searchInput.value)}
         </div>
       </div>
     </div>
@@ -374,7 +388,7 @@ if (!isset($_SESSION['usuario'])) {
       const loadMessages = async (contactId) => {
         try {
           document.getElementById('messagesList').innerHTML = '<div class="loading-spinner"><i class="bx bx-loader-circle bx-spin"></i></div>';
-          const response = await fetch(`php/ObtenerMensajesPorContacto.php?contact_id=${contactId}`);
+          const response = await fetch(`php/obtenerMensajesPorContacto.php?contact_id=${contactId}`);
           if (!response.ok) throw new Error('Error en la respuesta del servidor');
 
           const messages = await response.json();
@@ -389,16 +403,6 @@ if (!isset($_SESSION['usuario'])) {
                 minute: '2-digit'
               });
 
-              // Escapar contenido para prevenir XSS
-              const escapeHtml = (unsafe) => {
-                return unsafe
-                  .replace(/&/g, "&amp;")
-                  .replace(/</g, "&lt;")
-                  .replace(/>/g, "&gt;")
-                  .replace(/"/g, "&quot;")
-                  .replace(/'/g, "&#039;");
-              };
-
               if (msg.is_document) {
                 try {
                   const fileData = JSON.parse(msg.content);
@@ -406,7 +410,7 @@ if (!isset($_SESSION['usuario'])) {
                 <div class="message ${isSender ? 'sent' : 'received'}">
                   <div class="message-file">
                     <i class='bx bxs-file-${getFileIcon(fileData.fileType)}'></i>
-                    <a href="uploads/${escapeHtml(fileData.fileName)}" download 
+                    <a href="php/descargarDocumento.php?id=${msg.id}&file=${encodeURIComponent(fileData.fileName)}" 
                       onclick="showDownloadNotification('${escapeHtml(fileData.originalName)}')">
                       ${escapeHtml(fileData.originalName)}
                     </a>
@@ -460,6 +464,10 @@ if (!isset($_SESSION['usuario'])) {
 
           document.getElementById('messagesList').innerHTML = html;
           document.getElementById('messagesList').scrollTop = document.getElementById('messagesList').scrollHeight;
+
+          if (typeof window.refreshSidebarNotifications === 'function') {
+            window.refreshSidebarNotifications();
+          }
 
           // Actualizar el último mensaje en la lista de conversaciones
           if (lastMessage) {
@@ -595,9 +603,9 @@ if (!isset($_SESSION['usuario'])) {
               body: formData
             });
 
-            if (!response.ok) {
-              const errorData = await response.text();
-              throw new Error(errorData || 'Error al enviar el mensaje');
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+              throw new Error(result.message || 'Error al enviar el mensaje');
             }
 
             // Limpiar campos
@@ -695,8 +703,17 @@ if (!isset($_SESSION['usuario'])) {
       setupMessageForm();
       setupFileUpload();
       loadConversations();
+
+      const openForumBtn = document.getElementById('openForumBtn');
+      if (openForumBtn) {
+        openForumBtn.addEventListener('click', (event) => {
+          event.preventDefault();
+          window.location.href = 'Foro.php';
+        });
+      }
     });
   </script>
+  <script src="js/sidebarNotifications.js"></script>
 </body>
 
 </html>

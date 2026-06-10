@@ -17,7 +17,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Menú - Treyak</title>
+  <title>Configuración - Treyak</title>
   <link rel="stylesheet" href="css/sideBar.css">
   <link rel="stylesheet" href="css/HomeContenido.css">
   <link rel="stylesheet" href="css/ConfiguracionStyle.css">
@@ -67,13 +67,13 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
           <!--Icono del item-->
           <i class='bx bxs-user'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">User</span>
+          <span class="links_name">Usuarios</span>
         </a>
         <span class="tooltip">Usuarios</span>
       </li>
       <!--Mensajes-->
       <li>
-        <!--Redirecion a otra pagina-->
+        <!--Redirección a otra página-->
         <a href="Mensajes.php">
           <!--Icono del item-->
           <i class='bx bx-conversation'></i>
@@ -84,25 +84,25 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
       </li>
       <!--Administrador de archivos-->
       <li>
-        <!--Redirecion a otra pagina-->
+        <!--Redirección a otra página-->
         <a href="Foro.php">
           <!--Icono del item-->
           <i class='bx bxs-folder-open'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Archivos</span>
+          <span class="links_name">Foro</span>
         </a>
         <span class="tooltip">Foro</span>
       </li>
       <!--Items de la Lista-->
       <li>
-        <!--Configuracion-->
+        <!--Configuración-->
         <a href="Configuracion.php">
           <!--Icono del item-->
           <i class='bx bxs-cog'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Configuracion</span>
+          <span class="links_name">Configuración</span>
         </a>
-        <span class="tooltip">Configuracion</span>
+        <span class="tooltip">Configuración</span>
       </li>
       <!--Items de la Lista-->
       <li>
@@ -119,7 +119,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
     <div class="perfil_contenido">
       <div class="perfil">
         <div class="perfil_detalles">
-          <img src="images/perfil.jpg" alt="">
+          <img src="images/mewtwo-inspired-avatar.png" alt="">
           <div class="name_job">
             <div class="name">Abel Arriagada</div>
             <div class="job">Programador</div>
@@ -134,10 +134,9 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
       </div>
     </div>
   </div>
-  <!--Aqui ya comienza el segmento de la pagina-->
+  <!--Aquí ya comienza el segmento de la página-->
   <div class="home_contenido">
     <div class="contenido">
-      <div class="contenido">
         <div class="configuracion-container">
           <h1 class="configuracion-titulo">Configuración de Cuenta</h1>
 
@@ -154,7 +153,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
               </div>
               <div class="form-group">
                 <label for="email">Correo Electrónico</label>
-                <input type="email" id="email" value="<?php echo htmlspecialchars($_SESSION['correo'] ?? ''); ?>">
+                <input type="email" id="email" value="<?php echo htmlspecialchars($_SESSION['correoElectronico'] ?? ''); ?>">
                 <button class="btn-editar"><i class='bx bx-edit'></i> Actualizar</button>
               </div>
             </div>
@@ -201,14 +200,14 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
             <h2><i class='bx bxs-image'></i> Foto de Perfil</h2>
             <div class="foto-perfil-container">
               <div class="foto-perfil-preview">
-                <img src="images/perfil.jpg" alt="Foto de perfil actual" id="foto-preview">
+                <img src="images/mewtwo-inspired-avatar.png" alt="Foto de perfil actual" id="foto-preview">
               </div>
               <div class="foto-perfil-acciones">
                 <input type="file" id="foto-input" accept="image/*" style="display: none;">
-                <button class="btn-subir" onclick="document.getElementById('foto-input').click()">
+                <button class="btn-subir" type="button" id="btn-subir-foto">
                   <i class='bx bx-upload'></i> Subir Nueva Foto
                 </button>
-                <button class="btn-eliminar"><i class='bx bx-trash'></i> Eliminar Foto</button>
+                <button class="btn-eliminar" type="button"><i class='bx bx-trash'></i> Eliminar Foto</button>
               </div>
             </div>
           </div>
@@ -218,7 +217,6 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
             <button class="btn-cerrar-sesion"><i class='bx bx-log-out'></i> Cerrar Sesión</button>
           </div>
         </div>
-      </div>
     </div>
     <footer class="user-footer">
       <div class="footer-content">
@@ -247,7 +245,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
           </a>
         </div>
 
-        <p class="footer-copyright">© 2023 NombreApp. Todos los derechos reservados.</p>
+        <p class="footer-copyright">© 2026 Treyak. Todos los derechos reservados.</p>
       </div>
     </footer>
   </div>
@@ -264,6 +262,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
       sidebar.classList.toggle("active");
     }
   </script>
+  <script src="js/sidebarNotifications.js"></script>
 </body>
 
 

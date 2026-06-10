@@ -14,37 +14,65 @@ if (!isset($_SESSION['usuario'])) {
 include("php/conexion_be.php");
 
 if (isset($_POST['enviar'])) {
-    $id = $_POST['id'];
-    $nombre = $_POST['nombre'];
-    $usuario = $_POST['usuario'];
-    $correo = $_POST['correo'];
+    $id = intval($_POST['id'] ?? 0);
+    $nombre = trim($_POST['nombre'] ?? '');
+    $usuario = trim($_POST['usuario'] ?? '');
+    $correo = trim($_POST['correo'] ?? '');
 
-    $sql = "update usuario set nombreCompleto='".$nombre.
-      "', usuario='".$usuario."', correoElectronico='".$correo."' where id='".$id."'";
-    $resultado = mysqli_query($conexion, $sql);
+    if ($id <= 0 || $nombre === '' || $usuario === '' || !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+      header("Location: Usuarios.php?status=edit_invalid");
+      exit();
+    }
+
+    $duplicateStmt = $conexion->prepare("SELECT id FROM usuario WHERE (usuario = ? OR correoElectronico = ?) AND id != ? LIMIT 1");
+    $duplicateStmt->bind_param("ssi", $usuario, $correo, $id);
+    $duplicateStmt->execute();
+    $duplicateResult = $duplicateStmt->get_result();
+
+    if ($duplicateResult->num_rows > 0) {
+      $duplicateStmt->close();
+      mysqli_close($conexion);
+      header("Location: Usuarios.php?status=edit_duplicate");
+      exit();
+    }
+
+    $duplicateStmt->close();
+
+    $stmt = $conexion->prepare("UPDATE usuario SET nombreCompleto = ?, usuario = ?, correoElectronico = ? WHERE id = ?");
+    $stmt->bind_param("sssi", $nombre, $usuario, $correo, $id);
+    $resultado = $stmt->execute();
     
     if ($resultado) {
-      echo "<script language='JavaScript'>
-                alert('Los datos se actualizaron correctamente');
-                location.assign('Usuarios.php');
-                </script>";
+      header("Location: Usuarios.php?status=updated");
     } else {
-      echo "<script language='JavaScript'>
-                alert('Los datos no se actualizaron correctamente');
-                location.assign('Usuarios.php');
-                </script>";
+      header("Location: Usuarios.php?status=edit_error");
     }
+    $stmt->close();
     mysqli_close($conexion);
+    exit();
 } else {
-    $id = $_GET['id'];
-    $sql = "select * from usuario where id='".$id."'";
-    $resultado = mysqli_query($conexion, $sql);
+    $id = intval($_GET['id'] ?? 0);
+    if ($id <= 0) {
+      header("Location: Usuarios.php?status=edit_invalid");
+      exit();
+    }
+
+    $stmt = $conexion->prepare("SELECT * FROM usuario WHERE id = ? LIMIT 1");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
     $fila = mysqli_fetch_assoc($resultado);
+    if (!$fila) {
+      header("Location: Usuarios.php?status=not_found");
+      exit();
+    }
+
     $nombre = $fila["nombreCompleto"];
     $usuario = $fila["usuario"];
     $correo = $fila["correoElectronico"];
 
+    $stmt->close();
     mysqli_close($conexion);
 ?>
 <!DOCTYPE html>
@@ -105,13 +133,13 @@ if (isset($_POST['enviar'])) {
           <!--Icono del item-->
           <i class='bx bxs-user'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">User</span>
+          <span class="links_name">Usuarios</span>
         </a>
         <span class="tooltip">Usuarios</span>
       </li>
       <!--Mensajes-->
       <li>
-        <!--Redirecion a otra pagina-->
+        <!--Redirección a otra página-->
         <a href="Mensajes.php">
           <!--Icono del item-->
           <i class='bx bx-conversation'></i>
@@ -122,25 +150,25 @@ if (isset($_POST['enviar'])) {
       </li>
       <!--Administrador de archivos-->
       <li>
-        <!--Redirecion a otra pagina-->
+        <!--Redirección a otra página-->
         <a href="Foro.php">
           <!--Icono del item-->
           <i class='bx bxs-folder-open'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Archivos</span>
+          <span class="links_name">Foro</span>
         </a>
         <span class="tooltip">Foro</span>
       </li>
       <!--Items de la Lista-->
       <li>
-        <!--Configuracion-->
+        <!--Configuración-->
         <a href="Configuracion.php">
           <!--Icono del item-->
           <i class='bx bxs-cog'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Configuracion</span>
+          <span class="links_name">Configuración</span>
         </a>
-        <span class="tooltip">Configuracion</span>
+        <span class="tooltip">Configuración</span>
       </li>
       <!--Items de la Lista-->
       <li>
@@ -157,7 +185,7 @@ if (isset($_POST['enviar'])) {
     <div class="perfil_contenido">
       <div class="perfil">
         <div class="perfil_detalles">
-          <img src="images/perfil.jpg" alt="">
+          <img src="images/mewtwo-inspired-avatar.png" alt="">
           <div class="name_job">
             <div class="name">Abel Arriagada</div>
             <div class="job">Programador</div>
@@ -180,7 +208,7 @@ if (isset($_POST['enviar'])) {
     </div>
     
     <div class="edit-form">
-      <form action="<?= $_SERVER['PHP_SELF'] ?>" method="post">
+      <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
         <div class="form-group">
           <label for="nombre">Nombre Completo:</label>
           <input type="text" name="nombre" id="nombre" value="<?php echo htmlspecialchars($nombre); ?>" required>
@@ -230,7 +258,7 @@ if (isset($_POST['enviar'])) {
           </a>
         </div>
 
-        <p class="footer-copyright">© 2023 NombreApp. Todos los derechos reservados.</p>
+        <p class="footer-copyright">© 2026 Treyak. Todos los derechos reservados.</p>
       </div>
     </footer>
   </div>
@@ -249,6 +277,7 @@ if (isset($_POST['enviar'])) {
       sidebar.classList.toggle("active");
     }
   </script>
+  <script src="js/sidebarNotifications.js"></script>
 </body>
 </html>
 <?php } ?>

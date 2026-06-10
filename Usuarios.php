@@ -1,23 +1,60 @@
 <?php
 session_start();
-if (!isset($_SESSION['usuario'])) {
-  echo '
-      <script>
-        alert("Por favor debes iniciar sesion");
-        window.location = "index.php";
-      </script>
-      ';
-  session_destroy();
-  die();
+if (!isset($_SESSION['id'])) {
+  header('Location: index.php');
+  exit();
 }
 
 include("php/conexion_be.php");
-//Verifica que el id exista y se lo paso a una variable
-$usuario_actual_id = isset($_SESSION['id']) ? intval($_SESSION['id']) : 0;
 
-// Consulta excluyendo al usuario actual
-$sql = "SELECT * FROM usuario WHERE id != $usuario_actual_id";
-$resultado = mysqli_query($conexion, $sql);
+$usuario_actual_id = intval($_SESSION['id']);
+if (empty($_SESSION['csrf_delete_user'])) {
+  $_SESSION['csrf_delete_user'] = bin2hex(random_bytes(32));
+}
+
+$stmt = $conexion->prepare("
+  SELECT id, nombreCompleto, correoElectronico, usuario, avatar
+  FROM usuario
+  ORDER BY nombreCompleto ASC, usuario ASC
+");
+$stmt->execute();
+$resultado = $stmt->get_result();
+
+$usuarios = [];
+while ($row = $resultado->fetch_assoc()) {
+  $usuarios[] = $row;
+}
+
+$stmt->close();
+$conexion->close();
+
+$statusMessages = [
+  'updated' => ['success', 'Usuario actualizado correctamente.'],
+  'deleted' => ['success', 'Usuario eliminado correctamente.'],
+  'edit_invalid' => ['error', 'Revisa los datos antes de guardar.'],
+  'edit_duplicate' => ['error', 'El correo o nombre de usuario ya esta en uso.'],
+  'edit_error' => ['error', 'No se pudo actualizar el usuario.'],
+  'delete_invalid' => ['error', 'No puedes eliminar ese usuario.'],
+  'delete_error' => ['error', 'No se pudo eliminar el usuario.'],
+  'not_found' => ['error', 'El usuario no existe.']
+];
+
+$status = $_GET['status'] ?? '';
+$statusMessage = $statusMessages[$status] ?? null;
+$totalUsuarios = count($usuarios);
+$otrosUsuarios = max(0, $totalUsuarios - 1);
+$sessionName = $_SESSION['nombreCompleto'] ?? $_SESSION['usuario'] ?? 'Usuario';
+
+function initials($name, $fallback) {
+  $source = trim($name ?: $fallback);
+  if ($source === '') return 'U';
+
+  $parts = preg_split('/\s+/', $source);
+  $first = strtoupper(substr($parts[0], 0, 1));
+  $second = isset($parts[1]) ? strtoupper(substr($parts[1], 0, 1)) : '';
+
+  return htmlspecialchars($first . $second);
+}
 ?>
 
 <!DOCTYPE html>
@@ -25,224 +62,348 @@ $resultado = mysqli_query($conexion, $sql);
 
 <head>
   <meta charset="utf-8">
-  <title>Lista de usuarios | Treyak</title>
+  <title>Usuarios | Treyak</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Enlaces CSS -->
   <link rel="stylesheet" href="css/sideBar.css">
   <link rel="stylesheet" href="css/HomeContenido.css">
   <link rel="stylesheet" href="css/FooterStyle.css">
   <link rel="stylesheet" href="css/UsuariosStyle.css">
   <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
-
-
-  <script type="text/javascript">
-    function confirmar() {
-      return confirm('¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.');
-    }
-
-    // Función para expandir/contraer texto largo
-    function toggleText(element) {
-      element.classList.toggle('long-text');
-    }
-  </script>
 </head>
 
 <body>
-  <!-- Sidebar (se mantiene igual) -->
   <div class="sidebar">
-    <!--Div que contiene la parte del logo-->
     <div class="logo_content">
       <div class="logo">
-        <!--Icono de la empresa-->
         <i class='bx bx-joystick-alt'></i>
         <div class="logo_name">Treyak</div>
       </div>
-      <!--Icono del menu-->
       <i class='bx bx-menu' id="btn"></i>
     </div>
-    <!--Lista no ordenada-->
+
     <ul>
-      <!--Items de la Lista-->
       <li>
-        <!--Buscar-->
-        <!--Icono del item-->
         <i class='bx bx-search'></i>
-        <!--Icono del item-->
         <input type="text" placeholder="Search..." name="" value="">
         <span class="tooltipSearch">Search</span>
       </li>
       <div class="divider"></div>
-      <!--Items de la Lista-->
       <li>
-        <!--Inicio-->
         <a href="Inicio.php">
-          <!--Icono del item-->
           <i class='bx bxs-home-smile'></i>
-          <!--Resalta y ocupa un espacio segun el texto-->
           <span class="links_name">Inicio</span>
         </a>
         <span class="tooltip">Inicio</span>
       </li>
       <li>
-        <!--User-->
         <a href="Usuarios.php">
-          <!--Icono del item-->
           <i class='bx bxs-user'></i>
-          <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">User</span>
+          <span class="links_name">Usuarios</span>
         </a>
         <span class="tooltip">Usuarios</span>
       </li>
-      <!--Mensajes-->
       <li>
-        <!--Redirecion a otra pagina-->
         <a href="Mensajes.php">
-          <!--Icono del item-->
           <i class='bx bx-conversation'></i>
-          <!--Resalta y ocupa un espacio segun el texto-->
           <span class="links_name">Mensajes</span>
         </a>
-        <span class="tooltip">Mensaje</span>
+        <span class="tooltip">Mensajes</span>
       </li>
-      <!--Administrador de archivos-->
       <li>
-        <!--Redirecion a otra pagina-->
         <a href="Foro.php">
-          <!--Icono del item-->
           <i class='bx bxs-folder-open'></i>
-          <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Archivos</span>
+          <span class="links_name">Foro</span>
         </a>
         <span class="tooltip">Foro</span>
       </li>
-      <!--Items de la Lista-->
       <li>
-        <!--Configuracion-->
         <a href="Configuracion.php">
-          <!--Icono del item-->
           <i class='bx bxs-cog'></i>
-          <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Configuracion</span>
+          <span class="links_name">Configuración</span>
         </a>
-        <span class="tooltip">Configuracion</span>
+        <span class="tooltip">Configuración</span>
       </li>
-      <!--Items de la Lista-->
       <li>
-        <!--Ayuda-->
         <a href="Ayuda.php">
-          <!--Icono del item-->
           <i class='bx bxs-help-circle'></i>
-          <!--Resalta y ocupa un espacio segun el texto-->
           <span class="links_name">Ayuda</span>
         </a>
         <span class="tooltip">Ayuda</span>
       </li>
     </ul>
+
     <div class="perfil_contenido">
       <div class="perfil">
         <div class="perfil_detalles">
-          <img src="images/perfil.jpg" alt="">
+          <img src="images/mewtwo-inspired-avatar.png" alt="">
           <div class="name_job">
-            <div class="name">Abel Arriagada</div>
-            <div class="job">Programador</div>
+            <div class="name"><?php echo htmlspecialchars($sessionName); ?></div>
+            <div class="job">Sesión activa</div>
             <div class="log_out"></div>
           </div>
         </div>
-        <!--Icono del item-->
         <div>
           <a href="php/cerrar_sesion.php"><i class='bx bx-log-out' id="log_out"></i></a>
-
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Contenido principal - Diseño mejorado -->
-  <div class="home_contenido">
-    <div class="Gestion">
-      <h1>Gestión de Usuarios</h1>
-    </div>
-    <div class="users-grid">
-      <?php while ($filas = mysqli_fetch_assoc($resultado)): ?>
-        <div class="user-card">
-          <div class="user-info">
-            <div>
-              <i class='bx bx-id-card'></i>
-              <span><strong>ID:</strong> <?php echo htmlspecialchars($filas['id']); ?></span>
+  <main class="home_contenido">
+    <section class="users-page">
+      <header class="users-header">
+        <div>
+          <p class="section-kicker">Administracion</p>
+          <h1>Usuarios</h1>
+        </div>
+        <div class="users-summary" aria-label="Resumen de usuarios">
+          <div>
+            <strong><?php echo $totalUsuarios; ?></strong>
+            <span>Total</span>
+          </div>
+          <div>
+            <strong><?php echo $otrosUsuarios; ?></strong>
+            <span>Gestionables</span>
+          </div>
+        </div>
+      </header>
+
+      <?php if ($statusMessage): ?>
+        <div class="status-message <?php echo $statusMessage[0]; ?>" role="status">
+          <i class='bx <?php echo $statusMessage[0] === 'success' ? 'bx-check-circle' : 'bx-error-circle'; ?>'></i>
+          <span><?php echo htmlspecialchars($statusMessage[1]); ?></span>
+        </div>
+      <?php endif; ?>
+
+      <section class="users-toolbar" aria-label="Herramientas de usuarios">
+        <label class="users-search" for="userSearch">
+          <i class='bx bx-search'></i>
+          <input type="search" id="userSearch" placeholder="Buscar por nombre, usuario o correo">
+        </label>
+        <button type="button" class="clear-search" id="clearUserSearch" title="Limpiar búsqueda">
+          <i class='bx bx-x'></i>
+        </button>
+      </section>
+
+      <section class="users-list" id="usersList">
+        <?php if (empty($usuarios)): ?>
+          <div class="empty-users">
+            <i class='bx bx-user-x'></i>
+            <p>No hay usuarios registrados.</p>
+          </div>
+        <?php endif; ?>
+
+        <?php foreach ($usuarios as $usuario): ?>
+          <?php $isCurrentUser = intval($usuario['id']) === $usuario_actual_id; ?>
+          <article
+            class="user-row <?php echo $isCurrentUser ? 'is-current-user' : ''; ?>"
+            data-search="<?php echo htmlspecialchars(strtolower($usuario['nombreCompleto'] . ' ' . $usuario['usuario'] . ' ' . $usuario['correoElectronico'])); ?>">
+            <div class="user-main">
+            <div class="user-avatar" aria-hidden="true">
+                <img src="images/mewtwo-inspired-avatar.png" alt="">
             </div>
-            <div>
-              <i class='bx bx-user'></i>
-              <span><strong>Nombre:</strong> <?php echo htmlspecialchars($filas['nombreCompleto']); ?></span>
+              <div class="user-copy">
+                <div class="user-title-line">
+                  <h2><?php echo htmlspecialchars($usuario['nombreCompleto']); ?></h2>
+                  <?php if ($isCurrentUser): ?>
+                    <span class="user-badge">Tu cuenta</span>
+                  <?php endif; ?>
+                </div>
+                <p>@<?php echo htmlspecialchars($usuario['usuario']); ?></p>
+              </div>
             </div>
-            <div>
-              <i class='bx bx-at'></i>
-              <span><strong>Usuario:</strong> <?php echo htmlspecialchars($filas['usuario']); ?></span>
-            </div>
-            <div>
-              <i class='bx bx-envelope'></i>
-              <span class="long-text" onclick="toggleText(this)" title="Click para expandir/contraer">
-                <strong>Email:</strong> <?php echo htmlspecialchars($filas['correoElectronico']); ?>
+
+            <div class="user-meta">
+              <span title="Correo electrónico">
+                <i class='bx bx-envelope'></i>
+                <?php echo htmlspecialchars($usuario['correoElectronico']); ?>
+              </span>
+              <span title="Identificador interno">
+                <i class='bx bx-id-card'></i>
+                ID <?php echo htmlspecialchars($usuario['id']); ?>
               </span>
             </div>
-          </div>
 
-          <div class="user-actions">
-            <a href="editarUsuario.php?id=<?php echo $filas['id']; ?>" class="btn-action btn-edit">
-              <i class='bx bx-edit'></i> Editar
-            </a>
-            <a href="php/eliminarUsuario.php?id=<?php echo $filas['id']; ?>" class="btn-action btn-delete" onclick="return confirmar()">
-              <i class='bx bx-trash'></i> Eliminar
-            </a>
-          </div>
-        </div>
-      <?php endwhile; ?>
-    </div>
+            <div class="user-actions">
+              <button
+                type="button"
+                class="btn-action btn-edit js-open-edit-modal"
+                title="Modificar usuario"
+                data-id="<?php echo intval($usuario['id']); ?>"
+                data-nombre="<?php echo htmlspecialchars($usuario['nombreCompleto'], ENT_QUOTES); ?>"
+                data-usuario="<?php echo htmlspecialchars($usuario['usuario'], ENT_QUOTES); ?>"
+                data-correo="<?php echo htmlspecialchars($usuario['correoElectronico'], ENT_QUOTES); ?>">
+                <i class='bx bx-edit'></i>
+                <span>Modificar</span>
+              </button>
+
+              <?php if ($isCurrentUser): ?>
+                <button type="button" class="btn-action btn-delete is-disabled" disabled title="No puedes eliminar tu propia cuenta">
+                  <i class='bx bx-lock-alt'></i>
+                  <span>Eliminar</span>
+                </button>
+              <?php else: ?>
+                <form action="php/eliminarUsuario.php" method="post" class="delete-user-form">
+                  <input type="hidden" name="id" value="<?php echo intval($usuario['id']); ?>">
+                  <input type="hidden" name="csrf" value="<?php echo htmlspecialchars($_SESSION['csrf_delete_user']); ?>">
+                  <button type="submit" class="btn-action btn-delete" title="Eliminar usuario">
+                    <i class='bx bx-trash'></i>
+                    <span>Eliminar</span>
+                  </button>
+                </form>
+              <?php endif; ?>
+            </div>
+          </article>
+        <?php endforeach; ?>
+      </section>
+
+      <div class="empty-users is-hidden" id="emptySearchState">
+        <i class='bx bx-search-alt'></i>
+        <p>No encontramos usuarios con esa búsqueda.</p>
+      </div>
+
+      <div class="user-modal" id="editUserModal" aria-hidden="true">
+        <div class="user-modal__backdrop" data-close-edit-modal></div>
+        <section class="user-modal__panel" role="dialog" aria-modal="true" aria-labelledby="editUserModalTitle">
+          <header class="user-modal__header">
+            <div>
+              <p class="section-kicker">Edición rápida</p>
+              <h2 id="editUserModalTitle">Modificar usuario</h2>
+            </div>
+            <button type="button" class="user-modal__close" data-close-edit-modal title="Cerrar">
+              <i class='bx bx-x'></i>
+            </button>
+          </header>
+
+          <form action="editarUsuario.php" method="post" class="user-modal__form" id="editUserForm">
+            <input type="hidden" name="id" id="editUserId">
+            <input type="hidden" name="enviar" value="1">
+
+            <label class="modal-field" for="editUserName">
+              <span>Nombre completo</span>
+              <input type="text" name="nombre" id="editUserName" required>
+            </label>
+
+            <label class="modal-field" for="editUserUsername">
+              <span>Nombre de usuario</span>
+              <input type="text" name="usuario" id="editUserUsername" required>
+            </label>
+
+            <label class="modal-field" for="editUserEmail">
+              <span>Correo electrónico</span>
+              <input type="email" name="correo" id="editUserEmail" required>
+            </label>
+
+            <div class="user-modal__actions">
+              <button type="button" class="btn-modal-secondary" data-close-edit-modal>Cancelar</button>
+              <button type="submit" class="btn-modal-primary">
+                <i class='bx bx-save'></i>
+                Guardar cambios
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </section>
+
     <footer class="user-footer">
-        <div class="footer-content">
-          <div class="footer-links">
-            <a href="#" class="footer-link">Términos</a>
-            <a href="#" class="footer-link">Privacidad</a>
-            <a href="#" class="footer-link">Contacto</a>
-          </div>
-
-          <div class="footer-social">
-            <a href="https://www.facebook.com/abel.arriagadaurriola" class="social-icon" title="Facebook">
-              <i class='bx bxl-facebook' style='color:#fffafa'  ></i>
-            </a>
-            <a href="#" class="social-icon" title="Twitter">
-              <i class='bx bxl-twitter' style='color:#fffafa' ></i>
-            </a>
-            <a href="https://www.instagram.com/abelardoahhaaha/" class="social-icon" title="Instagram">
-              <i class='bx bxl-instagram' style='color:#fffafa' ></i>
-            </a>
-            <a href="https://cl.linkedin.com/in/abel-arriagada-urriola-9aaa19287" class="social-icon" title="LinkedIn">
-              <i class='bx bxl-linkedin' style='color:#fffafa' ></i>
-            </a>
-            <a href="https://wa.me/<+56956025318>?text=<Hola muy buenas, vengo a saludar>" class="social-icon" title="Whatsapp">
-              <i class='bx bxl-whatsapp' style='color:#fffafa' ></i>
-            </a>
-          </div>
-
-          <p class="footer-copyright">© 2023 NombreApp. Todos los derechos reservados.</p>
+      <div class="footer-content">
+        <div class="footer-links">
+          <a href="#" class="footer-link">Terminos</a>
+          <a href="#" class="footer-link">Privacidad</a>
+          <a href="#" class="footer-link">Contacto</a>
         </div>
-      </footer>
-  </div>
+        <p class="footer-copyright">© 2026 Treyak. Todos los derechos reservados.</p>
+      </div>
+    </footer>
+  </main>
 
   <script>
-    // Script para el sidebar (se mantiene igual)
-    let btn = document.querySelector("#btn");
-    let sidebar = document.querySelector(".sidebar");
-    let searchBtn = document.querySelector(".bx-search");
+    const btn = document.querySelector("#btn");
+    const sidebar = document.querySelector(".sidebar");
+    const searchBtn = document.querySelector(".bx-search");
 
     btn.onclick = function() {
       sidebar.classList.toggle("active");
-    }
+    };
 
     searchBtn.onclick = function() {
       sidebar.classList.toggle("active");
-    }
+    };
+
+    const userSearch = document.getElementById('userSearch');
+    const clearUserSearch = document.getElementById('clearUserSearch');
+    const userRows = Array.from(document.querySelectorAll('.user-row'));
+    const emptySearchState = document.getElementById('emptySearchState');
+
+    const filterUsers = () => {
+      const term = userSearch.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      userRows.forEach((row) => {
+        const matches = row.dataset.search.includes(term);
+        row.classList.toggle('is-hidden', !matches);
+        if (matches) visibleCount++;
+      });
+
+      emptySearchState.classList.toggle('is-hidden', visibleCount !== 0 || term === '');
+      clearUserSearch.classList.toggle('is-visible', term !== '');
+    };
+
+    userSearch.addEventListener('input', filterUsers);
+    clearUserSearch.addEventListener('click', () => {
+      userSearch.value = '';
+      filterUsers();
+      userSearch.focus();
+    });
+
+    const editUserModal = document.getElementById('editUserModal');
+    const editUserId = document.getElementById('editUserId');
+    const editUserName = document.getElementById('editUserName');
+    const editUserUsername = document.getElementById('editUserUsername');
+    const editUserEmail = document.getElementById('editUserEmail');
+
+    const openEditModal = (button) => {
+      editUserId.value = button.dataset.id || '';
+      editUserName.value = button.dataset.nombre || '';
+      editUserUsername.value = button.dataset.usuario || '';
+      editUserEmail.value = button.dataset.correo || '';
+      editUserModal.classList.add('is-open');
+      editUserModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      editUserName.focus();
+    };
+
+    const closeEditModal = () => {
+      editUserModal.classList.remove('is-open');
+      editUserModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    };
+
+    document.querySelectorAll('.js-open-edit-modal').forEach((button) => {
+      button.addEventListener('click', () => openEditModal(button));
+    });
+
+    document.querySelectorAll('[data-close-edit-modal]').forEach((button) => {
+      button.addEventListener('click', closeEditModal);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && editUserModal.classList.contains('is-open')) {
+        closeEditModal();
+      }
+    });
+
+    document.querySelectorAll('.delete-user-form').forEach((form) => {
+      form.addEventListener('submit', (event) => {
+        const row = form.closest('.user-row');
+        const name = row?.querySelector('h2')?.textContent?.trim() || 'este usuario';
+        const confirmed = confirm(`Eliminar a ${name}? Esta acción no se puede deshacer.`);
+        if (!confirmed) event.preventDefault();
+      });
+    });
   </script>
+  <script src="js/sidebarNotifications.js"></script>
 </body>
 
 </html>

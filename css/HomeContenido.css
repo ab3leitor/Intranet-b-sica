@@ -1,7 +1,5 @@
-/*Fuente de Google*/
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* contenido general de la pagina */
 * {
     margin: 0;
     padding: 0;
@@ -9,41 +7,63 @@
     font-family: "Poppins", sans-serif;
 }
 
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #14b8a6;
+    --warning-color: #f59e0b;
+    --danger-color: #dc2626;
+    --dark-color: #172033;
+    --light-color: #f8fbff;
+    --text-color: #172033;
+    --border-color: #dbe4ef;
+}
+
+html {
+    min-height: 100%;
+    background: #07111f;
+}
+
 body {
-    background: url(../images/FondoContenido.jpg);
+    min-height: 100vh;
+    min-width: 0;
+    margin: 0;
+    overflow-x: hidden;
+    position: relative;
+    background:
+        linear-gradient(135deg, rgba(7, 17, 31, 0.76), rgba(8, 23, 42, 0.58)),
+        url(../images/site-background.png);
     background-size: cover;
     background-position: center;
-    position: relative;
-    min-height: 150vh;
-    min-width: 110vh;
+    background-attachment: fixed;
 }
 
 body::before {
     content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Ajusta el último valor (0.5) para más/menos oscuridad */
+    position: fixed;
+    inset: 0;
     z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 18% 18%, rgba(20, 184, 166, 0.18), transparent 28%),
+        radial-gradient(circle at 82% 8%, rgba(37, 99, 235, 0.16), transparent 30%),
+        rgba(0, 0, 0, 0.28);
 }
 
 .home_contenido {
     position: relative;
-    min-height: 185vh;
+    min-height: 100vh;
     width: calc(100% - 140px);
     left: 78px;
+    padding: 1px 0 32px;
     transition: all 0.5s ease;
     z-index: 1;
 }
 
 .home_contenido .text {
+    margin-top: 12px;
+    color: var(--light-color);
     font-size: 25px;
     font-weight: 500;
-    color: #1d1b31;
-    margin-top: 12px;
 }
 
 .sidebar.sidebar.active~.home_contenido {
@@ -52,23 +72,10 @@ body::before {
 }
 
 .contenido {
-    position: absolute;
-    height: 90%;
-    width: 90%;
-    left: 90px;
-    margin: 1%;
-    padding: 1%;
-}
-
-:root {
-    --primary-color: #4e73df;
-    --secondary-color: #1cc88a;
-    --warning-color: #f6c23e;
-    --danger-color: #e74a3b;
-    --dark-color: #5a5c69;
-    --light-color: #f8f9fc;
-    --text-color: #333;
-    --border-color: #e3e6f0;
+    position: relative;
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: 32px 0 24px;
 }
 
 .welcome {
@@ -95,6 +102,8 @@ body::before {
     height: 60px;
     border-radius: 50%;
     overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.72);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
 }
 
 #fotoP {
@@ -114,18 +123,34 @@ body::before {
     color: #e3e6f0;
     align-items: center;
     justify-content: center;
-    position: relative; /* Necesario para posicionar la línea */
-    padding-bottom: 15px; /* Espacio para la línea */
+    position: relative;
+    padding-bottom: 15px;
 }
 
 .vistazo::after {
     content: "";
     position: absolute;
-    bottom: 0px; /* Ajusta la posición vertical */
+    bottom: 0;
     left: 25%;
     right: 25%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-    /* Alternativa sólida: background: var(--primary-color); */
+    background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
 }
 
+@media (max-width: 900px) {
+    .home_contenido {
+        width: calc(100% - 78px);
+        left: 78px;
+    }
+
+    .contenido {
+        width: min(100% - 28px, 1180px);
+        padding-top: 24px;
+    }
+
+    .welcome {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+    }
+}

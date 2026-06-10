@@ -43,7 +43,7 @@ if (!file_exists($uploadDir)) {
     }
 }
 
-if (!isset($_SESSION['usuario'])) {
+if (!isset($_SESSION['id'])) {
     ob_clean();
     header('HTTP/1.1 401 Unauthorized');
     echo json_encode(['success' => false, 'error' => 'No autorizado']);
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit();
 }
 
-if (!isset($_FILES['file']) || !isset($_POST['sender_id']) || !isset($_POST['receiver_id'])) {
+if (!isset($_FILES['file']) || !isset($_POST['receiver_id'])) {
     ob_clean();
     header('HTTP/1.1 400 Bad Request');
     echo json_encode(['success' => false, 'error' => 'Faltan datos']);
@@ -67,9 +67,17 @@ if (!isset($_FILES['file']) || !isset($_POST['sender_id']) || !isset($_POST['rec
     exit();
 }
 
-$senderId = intval($_POST['sender_id']);
+$senderId = intval($_SESSION['id']);
 $receiverId = intval($_POST['receiver_id']);
 $file = $_FILES['file'];
+
+if ($receiverId <= 0 || $receiverId === $senderId) {
+    ob_clean();
+    header('HTTP/1.1 400 Bad Request');
+    echo json_encode(['success' => false, 'error' => 'Destino no válido']);
+    ob_end_flush();
+    exit();
+}
 
 // Validaciones básicas
 if ($file['error'] !== UPLOAD_ERR_OK) {

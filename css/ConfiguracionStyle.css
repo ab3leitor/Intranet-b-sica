@@ -1,17 +1,17 @@
 .configuracion-container {
     position: relative;
-    max-width: 800px;
-    left: 0%;
+    max-width: 840px;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(219, 228, 239, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.12);
   }
   
   .configuracion-titulo {
     text-align: center;
-    color: #333;
+    color: #172033;
     margin-bottom: 30px;
     font-size: 28px;
   }
@@ -19,11 +19,11 @@
   .configuracion-seccion {
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #dbe4ef;
   }
   
   .configuracion-seccion h2 {
-    color: #444;
+    color: #172033;
     margin-bottom: 15px;
     display: flex;
     align-items: center;
@@ -45,7 +45,7 @@
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 16px;
   }
   
@@ -54,7 +54,7 @@
     color: white;
     border: none;
     padding: 10px 15px;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     margin-top: 10px;
     display: flex;
@@ -88,7 +88,8 @@
     height: 100px;
     border-radius: 50%;
     overflow: hidden;
-    border: 3px solid #eee;
+    border: 3px solid rgba(168, 85, 247, 0.28);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
   }
   
   .foto-perfil-preview img {
@@ -106,7 +107,7 @@
   .btn-subir, .btn-eliminar {
     padding: 8px 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -122,6 +123,12 @@
   .btn-eliminar {
     background-color: #f8f9fa;
     border: 1px solid #ddd;
+  }
+
+  .btn-eliminar:hover {
+    background-color: #fff1f2;
+    border-color: #fecaca;
+    color: #dc2626;
   }
   
   .configuracion-acciones {
@@ -152,4 +159,29 @@
     display: flex;
     align-items: center;
     gap: 5px;
+  }
+
+  .config-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 2000;
+    max-width: min(360px, calc(100% - 48px));
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #ffffff;
+    background: #16a34a;
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.22);
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .config-toast.error {
+    background: #dc2626;
+  }
+
+  .config-toast.is-hiding {
+    opacity: 0;
+    transform: translateY(8px);
   }

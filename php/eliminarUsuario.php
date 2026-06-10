@@ -1,19 +1,37 @@
 <?php
-    $id=$_GET['id'];
-    include("conexion_be.php");
-    /* Delete from usuario where id=#$id */
-    $sql="delete from usuario where id='".$id."'";
-    $resultado=mysqli_query($conexion,$sql);
-    /* Mensaje que confirma si se realizo la eliminacion o no */
-    if ($resultado) {
-        echo "<script language='JavaScript'>
-            alert('Los datos se eliminaron correctamente de la BD');
-            location.assign('../index.php');
-            </script>";
-    } else {
-        echo "<script language='JavaScript'>
-            alert('Los datos no se eliminaron correctamente de la BD');
-            location.assign('../index.php');
-            </script>";
-    }
+session_start();
+include("conexion_be.php");
+
+if (!isset($_SESSION['id'])) {
+    header("Location: ../index.php");
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header("Location: ../Usuarios.php?status=delete_invalid");
+    exit();
+}
+
+$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+$csrf = $_POST['csrf'] ?? '';
+$currentUserId = intval($_SESSION['id']);
+$sessionToken = $_SESSION['csrf_delete_user'] ?? '';
+
+if ($id <= 0 || $id === $currentUserId || $csrf === '' || !hash_equals($sessionToken, $csrf)) {
+    header("Location: ../Usuarios.php?status=delete_invalid");
+    exit();
+}
+
+$stmt = $conexion->prepare("DELETE FROM usuario WHERE id = ?");
+$stmt->bind_param("i", $id);
+$resultado = $stmt->execute();
+$stmt->close();
+$conexion->close();
+
+if ($resultado) {
+    header("Location: ../Usuarios.php?status=deleted");
+} else {
+    header("Location: ../Usuarios.php?status=delete_error");
+}
+exit();
 ?>

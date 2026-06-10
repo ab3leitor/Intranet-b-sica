@@ -9,12 +9,15 @@
 
 /* Estructura principal */
 body {
-    background-image: url(../../images/index/fondo3.webp);
+    margin: 0;
+    background-image:
+        linear-gradient(135deg, rgba(7, 17, 31, 0.35), rgba(17, 24, 39, 0.18)),
+        url(../../images/index/login-background.png);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: fixed;
-    min-height: 90vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;

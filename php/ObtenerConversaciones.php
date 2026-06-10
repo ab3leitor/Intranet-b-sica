@@ -4,34 +4,44 @@ require 'conexion_be.php';
 
 session_start();
 if (!isset($_SESSION['id'])) {
+    http_response_code(401);
     echo json_encode(['error' => 'No autenticado']);
     exit;
 }
 
-$userId = $_SESSION['id'];
+$userId = intval($_SESSION['id']);
 
-// Consulta optimizada
-$query = "SELECT 
-    u.id as user_id,
-    u.usuario as name,
-    (SELECT content FROM messages 
-     WHERE (sender_id = u.id AND receiver_id = $userId)
-     OR (sender_id = $userId AND receiver_id = u.id)
-     ORDER BY created_at DESC LIMIT 1) as last_message
+$query = "SELECT
+    u.id AS user_id,
+    u.usuario AS name,
+    u.nombreCompleto AS full_name,
+    (SELECT content FROM messages
+     WHERE (sender_id = u.id AND receiver_id = ?)
+        OR (sender_id = ? AND receiver_id = u.id)
+     ORDER BY created_at DESC LIMIT 1) AS last_message,
+    (SELECT is_document FROM messages
+     WHERE (sender_id = u.id AND receiver_id = ?)
+        OR (sender_id = ? AND receiver_id = u.id)
+     ORDER BY created_at DESC LIMIT 1) AS last_is_document,
+    (SELECT created_at FROM messages
+     WHERE (sender_id = u.id AND receiver_id = ?)
+        OR (sender_id = ? AND receiver_id = u.id)
+     ORDER BY created_at DESC LIMIT 1) AS last_message_at
 FROM usuario u
-WHERE u.id != $userId
-ORDER BY (SELECT created_at FROM messages 
-          WHERE (sender_id = u.id AND receiver_id = $userId)
-          OR (sender_id = $userId AND receiver_id = u.id)
-          ORDER BY created_at DESC LIMIT 1) DESC";
+WHERE u.id != ?
+ORDER BY last_message_at IS NULL, last_message_at DESC, u.usuario ASC";
 
-$result = mysqli_query($conexion, $query);
+$stmt = $conexion->prepare($query);
+$stmt->bind_param("iiiiiii", $userId, $userId, $userId, $userId, $userId, $userId, $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+
 $conversations = [];
-
-while ($row = mysqli_fetch_assoc($result)) {
+while ($row = $result->fetch_assoc()) {
     $conversations[] = $row;
 }
 
 echo json_encode($conversations);
-mysqli_close($conexion);
+$stmt->close();
+$conexion->close();
 ?>

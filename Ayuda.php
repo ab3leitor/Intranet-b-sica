@@ -67,13 +67,13 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
           <!--Icono del item-->
           <i class='bx bxs-user'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">User</span>
+          <span class="links_name">Usuarios</span>
         </a>
         <span class="tooltip">Usuarios</span>
       </li>
       <!--Mensajes-->
       <li>
-        <!--Redirecion a otra pagina-->
+        <!--Redirección a otra página-->
         <a href="Mensajes.php">
           <!--Icono del item-->
           <i class='bx bx-conversation'></i>
@@ -84,25 +84,25 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
       </li>
       <!--Administrador de archivos-->
       <li>
-        <!--Redirecion a otra pagina-->
+        <!--Redirección a otra página-->
         <a href="Foro.php">
           <!--Icono del item-->
           <i class='bx bxs-folder-open'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Archivos</span>
+          <span class="links_name">Foro</span>
         </a>
         <span class="tooltip">Foro</span>
       </li>
       <!--Items de la Lista-->
       <li>
-        <!--Configuracion-->
+        <!--Configuración-->
         <a href="Configuracion.php">
           <!--Icono del item-->
           <i class='bx bxs-cog'></i>
           <!--Resalta y ocupa un espacio segun el texto-->
-          <span class="links_name">Configuracion</span>
+          <span class="links_name">Configuración</span>
         </a>
-        <span class="tooltip">Configuracion</span>
+        <span class="tooltip">Configuración</span>
       </li>
       <!--Items de la Lista-->
       <li>
@@ -119,7 +119,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
     <div class="perfil_contenido">
       <div class="perfil">
         <div class="perfil_detalles">
-          <img src="images/perfil.jpg" alt="">
+          <img src="images/mewtwo-inspired-avatar.png" alt="">
           <div class="name_job">
             <div class="name">Abel Arriagada</div>
             <div class="job">Programador</div>
@@ -134,7 +134,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
       </div>
     </div>
   </div>
-  <!--Aqui ya comienza el segmento de la pagina-->
+  <!--Aquí ya comienza el segmento de la página-->
   <div class="home_contenido">
     <div class="contenido">
       <div class="contenido">
@@ -299,7 +299,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
           </a>
         </div>
 
-        <p class="footer-copyright">© 2023 NombreApp. Todos los derechos reservados.</p>
+        <p class="footer-copyright">© 2026 Treyak. Todos los derechos reservados.</p>
       </div>
     </footer>
   </div>
@@ -315,6 +315,7 @@ $nombreCompleto_db = $_SESSION['nombreCompleto'];
       sidebar.classList.toggle("active");
     }
   </script>
+  <script src="js/sidebarNotifications.js"></script>
 </body>
 
 

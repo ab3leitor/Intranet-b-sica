@@ -341,7 +341,7 @@
 }
 
 /* ==================== */
-/* SECCIÓN DEL FORO */
+/* SECCION DEL FORO */
 /* ==================== */
 
 .forum-section {
@@ -440,7 +440,7 @@
 }
 
 /* ==================== */
-/* BOTÓN FLOTANTE DEL FORO */
+/* BOTON FLOTANTE DEL FORO */
 /* ==================== */
 
 .floating-forum-btn {
@@ -670,4 +670,247 @@
 .document-message a:hover {
     color: #2196F3;
     text-decoration: underline;
+}
+
+/* Refresh visual 2026 */
+:root {
+    --chat-primary: #2563eb;
+    --chat-primary-dark: #1d4ed8;
+    --chat-secondary: #14b8a6;
+    --chat-accent: #f97316;
+    --chat-bg: #f4f7fb;
+    --chat-panel: #ffffff;
+    --chat-border: #dbe4ef;
+    --chat-text: #172033;
+    --chat-muted: #64748b;
+    --chat-danger: #dc2626;
+}
+
+::-webkit-scrollbar-track {
+    background: #eef4f8;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #aab8c8;
+}
+
+.chat-container {
+    height: calc(100vh - 132px);
+    border: 1px solid rgba(219, 228, 239, 0.9);
+    border-radius: 8px;
+    background: var(--chat-panel);
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+}
+
+.conversation-list {
+    width: min(340px, 36vw);
+    border-right: 1px solid var(--chat-border);
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.search-bar {
+    padding: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+    border-bottom: 1px solid var(--chat-border);
+}
+
+.search-bar input {
+    border-radius: 8px;
+    border-color: var(--chat-border);
+    background-color: #eef4f8;
+}
+
+.search-bar input:focus {
+    border-color: var(--chat-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.conversation-item {
+    border-bottom: 1px solid #edf2f7;
+    transition: background-color 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+
+.conversation-item:hover {
+    background-color: #f0fdfa;
+    transform: translateX(2px);
+}
+
+.conversation-item.active {
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.13), rgba(20, 184, 166, 0.10));
+    border-left: 4px solid var(--chat-primary);
+}
+
+.conversation-avatar {
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.conversation-name {
+    color: var(--chat-text);
+}
+
+.conversation-preview {
+    color: var(--chat-muted);
+}
+
+.chat-area {
+    background: var(--chat-panel);
+}
+
+.chat-header {
+    padding: 18px 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border-bottom: 1px solid var(--chat-border);
+}
+
+.chat-header h2 {
+    color: var(--chat-text);
+    font-size: 1.05rem;
+}
+
+.messages-list {
+    background:
+        linear-gradient(180deg, rgba(244, 247, 251, 0.92), rgba(239, 246, 255, 0.9));
+    background-image: none;
+    padding: 24px;
+}
+
+.message {
+    animation: messageIn 180ms ease-out both;
+}
+
+.message-text,
+.message-file {
+    border-radius: 8px;
+}
+
+.message.sent .message-text,
+.message.sent .message-file {
+    background: linear-gradient(135deg, var(--chat-primary), var(--chat-secondary));
+    color: #ffffff;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+}
+
+.message.received .message-text,
+.message.received .message-file {
+    background: #ffffff;
+    color: var(--chat-text);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.message-info {
+    color: #7b8ba1;
+}
+
+#messageForm {
+    gap: 12px;
+    padding: 14px 18px;
+    background: #ffffff;
+    border-top: 1px solid var(--chat-border);
+}
+
+#messageForm textarea {
+    border-radius: 8px;
+    border-color: var(--chat-border);
+    color: var(--chat-text);
+    line-height: 1.35;
+}
+
+#messageForm textarea:focus {
+    border-color: var(--chat-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+#messageForm button,
+.upload-btn,
+.floating-forum-btn {
+    background: var(--chat-primary);
+    transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+#messageForm button:hover,
+.upload-btn:hover,
+.floating-forum-btn:hover {
+    background: var(--chat-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.22);
+}
+
+.upload-btn,
+#messageForm button {
+    border-radius: 8px;
+}
+
+.floating-forum-btn {
+    border-radius: 8px;
+    bottom: 24px;
+    right: 24px;
+}
+
+.empty-state,
+.error-state,
+.empty-search {
+    min-height: 180px;
+    color: var(--chat-muted);
+}
+
+.error-state {
+    color: var(--chat-danger);
+}
+
+.notification,
+.download-notification {
+    border-radius: 8px;
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
+}
+
+.notification.success,
+.download-notification {
+    background: #16a34a;
+}
+
+.notification.error {
+    background: var(--chat-danger);
+}
+
+@keyframes messageIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 820px) {
+    .chat-container {
+        height: auto;
+        min-height: calc(100vh - 120px);
+        flex-direction: column;
+    }
+
+    .conversation-list {
+        width: 100%;
+        max-height: 260px;
+        border-right: 0;
+        border-bottom: 1px solid var(--chat-border);
+    }
+
+    .messages-list {
+        min-height: 360px;
+    }
+
+    .message {
+        max-width: 86%;
+    }
+
+    .floating-forum-btn {
+        right: 16px;
+        bottom: 16px;
+    }
+}
+
+.floating-forum-btn {
+    text-decoration: none;
 }
