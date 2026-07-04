@@ -445,3 +445,11 @@
         justify-content: space-between;
     }
 }
+.progress-10 { width: 10%; }
+.progress-30 { width: 30%; }
+.progress-40 { width: 40%; }
+.progress-42 { width: 42.5%; }
+.progress-65 { width: 65%; }
+.course-thumbnail-blue { background-color: #4e73df; }
+.course-thumbnail-green { background-color: #1cc88a; }
+.course-thumbnail-yellow { background-color: #f6c23e; }

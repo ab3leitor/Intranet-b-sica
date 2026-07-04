@@ -311,3 +311,4 @@ button[type="submit"]:disabled {
     border-color: #46A2FD;
     box-shadow: 0 0 0 3px rgba(70, 162, 253, 0.3);
 }
+.is-hidden { display: none; }

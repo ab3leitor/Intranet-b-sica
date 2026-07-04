@@ -63,7 +63,6 @@ try {
       ];
 
       // Redirección con JavaScript como fallback
-      echo '<script>window.location.href = "../Inicio.php";</script>';
       header("Location: ../Inicio.php");
       exit;
     }

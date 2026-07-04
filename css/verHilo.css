@@ -1,0 +1,105 @@
+/* Estilos específicos para la vista de hilo */
+    .thread-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    
+    .thread-header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      background-color: #f9f9f9;
+      border-radius: 8px 8px 0 0;
+    }
+    
+    .thread-title {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 1.5rem;
+    }
+    
+    .thread-meta {
+      margin-top: 10px;
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+    
+    .message-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .message-item {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .message-author {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    
+    .message-time {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    
+    .message-content {
+      color: #34495e;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    
+    .reply-form {
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 0 0 8px 8px;
+    }
+    
+    .reply-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+    
+    .btn-reply {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .btn-reply:hover {
+      background-color: #2980b9;
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-top: 15px;
+      color: #3498db;
+      text-decoration: none;
+      margin-bottom: 20px;
+    }
+    
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    
+    .first-message {
+      background-color: #f0f8ff;
+      border-left: 4px solid #3498db;
+    }

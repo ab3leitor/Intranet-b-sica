@@ -914,3 +914,9 @@
 .floating-forum-btn {
     text-decoration: none;
 }
+.is-hidden { display: none; }
+.conversation-avatar.avatar-blue { background: #3498db; }
+.conversation-avatar.avatar-green { background: #2ecc71; }
+.conversation-avatar.avatar-purple { background: #9b59b6; }
+.conversation-avatar.avatar-yellow { background: #f1c40f; }
+.conversation-avatar.avatar-teal { background: #1abc9c; }

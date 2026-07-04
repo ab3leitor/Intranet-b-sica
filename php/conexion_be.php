@@ -4,12 +4,6 @@
 
  if($conexion === false){
      die("ERROR EN LA CONEXION" . mysqli_connect_error());
-     echo '
-     <script>
-        window.location = "../index.php";
-     </script>
-     ';
-     
  }
 
 ?>   
